@@ -31,7 +31,7 @@ from unittest import TestCase
 from urllib.parse import quote_plus
 from service import app
 from service.common import status
-from service.models import db, init_db, Product
+from service.models import db, init_db, Product, Category
 from tests.factories import ProductFactory
 
 # Disable all but critical errors during normal test run
@@ -164,6 +164,11 @@ class TestProductRoutes(TestCase):
         response = self.client.post(BASE_URL, data={}, content_type="plain/text")
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    def test_create_product_wrong_availability_type(self):
+        """It should not Create a Product with wrong Availability Type"""
+        response = self.client.post(BASE_URL, data={"name": "Fedora", "description": "A red hat", "price": 12.50, "available": "hehe", "category": ""}, content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     #
     # ADD YOUR TEST CASES HERE
     #
@@ -193,6 +198,10 @@ class TestProductRoutes(TestCase):
         # update the product
         new_product = response.get_json()
         new_product["description"] = "unknown"
+        # test an unknown product
+        response = self.client.put(f"{BASE_URL}/999999999", json=new_product)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        # test a known product
         response = self.client.put(f"{BASE_URL}/{new_product['id']}", json=new_product)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         updated_product = response.get_json()
