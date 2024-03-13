@@ -81,7 +81,7 @@ class TestProductModel(unittest.TestCase):
         self.assertEqual(product.available, True)
         self.assertEqual(product.price, 12.50)
         self.assertEqual(product.category, Category.CLOTHS)
-        
+
     def test_add_a_product(self):
         """It should Create a product and add it to the database"""
         products = Product.all()

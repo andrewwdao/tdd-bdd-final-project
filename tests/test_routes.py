@@ -31,7 +31,7 @@ from unittest import TestCase
 from urllib.parse import quote_plus
 from service import app
 from service.common import status
-from service.models import db, init_db, Product, Category
+from service.models import db, init_db, Product
 from tests.factories import ProductFactory
 
 # Disable all but critical errors during normal test run
@@ -166,7 +166,13 @@ class TestProductRoutes(TestCase):
 
     def test_create_product_wrong_availability_type(self):
         """It should not Create a Product with wrong Availability Type"""
-        response = self.client.post(BASE_URL, data={"name": "Fedora", "description": "A red hat", "price": 12.50, "available": "hehe", "category": ""}, content_type="application/json")
+        response = self.client.post(BASE_URL, data={
+            "name": "Fedora",
+            "description": "A red hat",
+            "price": 12.50,
+            "available": "hehe",
+            "category": ""},
+            content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     #
